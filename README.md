@@ -1,3 +1,29 @@
+
+
+///RDX HERE
+
+
+prerequirements:--
+brew install cmake ninja pkg-config icu4c capstone   
+pip3 install pyelftools requests
+brew install apktool  
+//-------------------------------------------------
+
+apktool d (APPNAME).apk -o app_decoded   
+python3 blutter.py app_decoded/lib/arm64-v8a out_dir
+
+
+
+
+
+
+
+
+
+
+
+
+
 # B(l)utter
 Flutter Mobile Application Reverse Engineering Tool by Compiling Dart AOT Runtime
 

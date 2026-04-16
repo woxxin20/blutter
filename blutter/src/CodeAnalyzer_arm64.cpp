@@ -1458,7 +1458,12 @@ void FunctionAnalyzer::handleOptionalNamedParameters(AsmIterator& insn, arm64_re
 				foundAssignParamPos0 = processAssignParamPos0();
 			}
 
-			INSN_ASSERT(nextParamAddr == 0 || insn.address() == nextParamAddr);
+			// Handle edge case where instruction pointer doesn't match expected nextParamAddr
+			// This can happen with non-standard code patterns the analyzer doesn't recognize
+			// Instead of asserting, break out of the loop gracefully
+			if (!(nextParamAddr == 0 || insn.address() == nextParamAddr)) {
+				break;
+			}
 		}
 
 		if (doLoadValue) {

@@ -21,13 +21,20 @@ void CodeAnalyzer::AnalyzeAll()
 				if (dartFn->Size() == 0)
 					continue;
 
-				// start from PayloadAddress or Address?
-				// the assemblies will be deleted after finish analysis because assembly with details consume too much memory
-				auto asm_insns = disasmer.Disasm((uint8_t*)dartFn->MemAddress(), dartFn->Size(), dartFn->Address());
+				try {
+					// start from PayloadAddress or Address?
+					// the assemblies will be deleted after finish analysis because assembly with details consume too much memory
+					auto asm_insns = disasmer.Disasm((uint8_t*)dartFn->MemAddress(), dartFn->Size(), dartFn->Address());
 
-				dartFn->SetAnalyzedData(std::make_unique<AnalyzedFnData>(app, *dartFn, convertAsm(asm_insns)));
+					dartFn->SetAnalyzedData(std::make_unique<AnalyzedFnData>(app, *dartFn, convertAsm(asm_insns)));
 
-				asm2il(dartFn, asm_insns);
+					asm2il(dartFn, asm_insns);
+				}
+				catch (const std::exception& e) {
+					// Skip functions that fail analysis to prevent crashes
+					std::cerr << "Warning: Analysis failed for function at " << std::hex << dartFn->Address() 
+						<< ": " << e.what() << "\n";
+				}
 			}
 		}
 	}
